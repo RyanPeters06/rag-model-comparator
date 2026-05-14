@@ -1,5 +1,6 @@
 # ── API keys — NEVER commit ───────────────────────────────────────────────────
-.env
+.env*
+!.env.example
 
 # ── Knowledge base — PDF source files and built index ────────────────────────
 *.pdf
