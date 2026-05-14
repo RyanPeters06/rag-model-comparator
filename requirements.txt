@@ -1,0 +1,11 @@
+PyQt5==5.15.11
+anthropic>=0.40
+openai>=1.50
+google-generativeai>=0.8
+mistralai>=1.0
+fastembed>=0.3
+faiss-cpu==1.13.2
+pymupdf>=1.24
+numpy>=1.26
+pandas>=2.2
+python-dotenv>=1.0

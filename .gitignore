@@ -1,0 +1,44 @@
+# ── API keys — NEVER commit ───────────────────────────────────────────────────
+.env
+
+# ── Knowledge base — PDF source files and built index ────────────────────────
+*.pdf
+knowledge_base_index/
+
+# ── User-specific state ───────────────────────────────────────────────────────
+settings.json
+exports/
+
+# ── Python cache ──────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── Build / dist ──────────────────────────────────────────────────────────────
+build/
+dist/
+*.egg-info/
+*.egg
+
+# ── Claude Code ───────────────────────────────────────────────────────────────
+.claude/
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# ── Hugging Face model cache (large, auto-downloaded) ────────────────────────
+.cache/
