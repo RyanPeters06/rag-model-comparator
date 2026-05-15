@@ -29,5 +29,10 @@ class BaseProvider(ABC):
         token_callback: Callable[[str], None],
         done_callback: Callable[[int, int], None],
         error_callback: Callable[[str], None],
+        images: list[str] | None = None,
     ) -> None:
-        """Blocking. Runs inside a QThread. All output via callbacks."""
+        """Blocking. Runs inside a QThread. All output via callbacks.
+
+        images: list of base64-encoded PNG strings (page images from RAG).
+        Vision-capable providers embed them in the user message; others ignore.
+        """

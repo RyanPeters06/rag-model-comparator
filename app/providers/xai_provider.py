@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Callable
 
 from app.providers.base import BaseProvider
+from app.providers.openai_provider import _build_user_content
 
 
 class XAIProvider(BaseProvider):
@@ -22,13 +23,14 @@ class XAIProvider(BaseProvider):
         token_callback: Callable[[str], None],
         done_callback: Callable[[int, int], None],
         error_callback: Callable[[str], None],
+        images: list[str] | None = None,
     ) -> None:
         try:
             import openai
             messages = []
             if system_context:
                 messages.append({"role": "system", "content": system_context})
-            messages.append({"role": "user", "content": prompt})
+            messages.append({"role": "user", "content": _build_user_content(prompt, images)})
 
             in_tok = 0
             out_tok = 0

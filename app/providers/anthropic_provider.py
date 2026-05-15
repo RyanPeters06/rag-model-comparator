@@ -21,14 +21,30 @@ class AnthropicProvider(BaseProvider):
         token_callback: Callable[[str], None],
         done_callback: Callable[[int, int], None],
         error_callback: Callable[[str], None],
+        images: list[str] | None = None,
     ) -> None:
         try:
             import anthropic
-            messages = [{"role": "user", "content": prompt}]
-            kwargs = {
+
+            if images:
+                content: list[dict] = []
+                for b64 in images:
+                    content.append({
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/png",
+                            "data": b64,
+                        },
+                    })
+                content.append({"type": "text", "text": prompt})
+            else:
+                content = [{"type": "text", "text": prompt}]
+
+            kwargs: dict = {
                 "model": self.model_id,
                 "max_tokens": 4096,
-                "messages": messages,
+                "messages": [{"role": "user", "content": content}],
             }
             if system_context:
                 kwargs["system"] = system_context

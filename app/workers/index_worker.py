@@ -63,4 +63,6 @@ class IndexWorker(QThread):
             self.finished.emit(True, f"Index ready: {len(all_chunks)} chunks from {len(self._pdf_paths)} PDF(s)")
 
         except Exception as exc:
-            self.finished.emit(False, f"Indexing failed: {exc}")
+            import traceback
+            detail = traceback.format_exc()
+            self.finished.emit(False, f"Indexing failed ({type(exc).__name__}): {exc}\n\n{detail}")

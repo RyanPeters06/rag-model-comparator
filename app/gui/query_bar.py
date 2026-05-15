@@ -11,6 +11,8 @@ class QueryBar(QWidget):
     send_requested = pyqtSignal(str, str)   # question, ground_truth
     clear_requested = pyqtSignal()
     export_requested = pyqtSignal()
+    settings_requested = pyqtSignal()
+    layout_toggled = pyqtSignal(bool)       # True = wide/full-height mode
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -60,6 +62,15 @@ class QueryBar(QWidget):
         self._export_btn = QPushButton("Export Results")
         self._export_btn.clicked.connect(self.export_requested.emit)
 
+        self._settings_btn = QPushButton("⚙ Models")
+        self._settings_btn.setToolTip("Show / hide individual AI model panels")
+        self._settings_btn.clicked.connect(self.settings_requested.emit)
+
+        self._layout_btn = QPushButton("⊞ Wide View")
+        self._layout_btn.setToolTip("Switch to full-height panels with left-right scrolling")
+        self._layout_btn.setCheckable(True)
+        self._layout_btn.clicked.connect(self._on_layout_toggle)
+
         self._sources_label = QLabel("")
         self._sources_label.setObjectName("statusLabel")
         self._sources_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -67,14 +78,19 @@ class QueryBar(QWidget):
         btn_row.addWidget(self._send_btn)
         btn_row.addWidget(self._clear_btn)
         btn_row.addWidget(self._export_btn)
+        btn_row.addWidget(self._settings_btn)
+        btn_row.addWidget(self._layout_btn)
         btn_row.addStretch()
         btn_row.addWidget(self._sources_label)
         layout.addLayout(btn_row)
 
+    def _on_layout_toggle(self, checked: bool):
+        self._layout_btn.setText("☰ Grid View" if checked else "⊞ Wide View")
+        self.layout_toggled.emit(checked)
+
     def eventFilter(self, obj, event):
         if obj is self._question_edit:
             from PyQt5.QtCore import QEvent
-            from PyQt5.QtGui import QKeyEvent
             if event.type() == QEvent.KeyPress:
                 ke = event
                 if ke.key() == Qt.Key_Return and ke.modifiers() & Qt.ControlModifier:

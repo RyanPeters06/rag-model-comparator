@@ -5,6 +5,19 @@ from typing import Callable
 from app.providers.base import BaseProvider
 
 
+def _build_user_content(prompt: str, images: list[str] | None) -> str | list:
+    if not images:
+        return prompt
+    content: list[dict] = []
+    for b64 in images:
+        content.append({
+            "type": "image_url",
+            "image_url": {"url": f"data:image/png;base64,{b64}"},
+        })
+    content.append({"type": "text", "text": prompt})
+    return content
+
+
 class OpenAIProvider(BaseProvider):
     def __init__(self, model_config: dict):
         super().__init__(model_config)
@@ -21,13 +34,14 @@ class OpenAIProvider(BaseProvider):
         token_callback: Callable[[str], None],
         done_callback: Callable[[int, int], None],
         error_callback: Callable[[str], None],
+        images: list[str] | None = None,
     ) -> None:
         try:
             import openai
             messages = []
             if system_context:
                 messages.append({"role": "system", "content": system_context})
-            messages.append({"role": "user", "content": prompt})
+            messages.append({"role": "user", "content": _build_user_content(prompt, images)})
 
             supports_streaming = self.model_config.get("supports_streaming", True)
 

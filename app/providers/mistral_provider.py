@@ -9,7 +9,7 @@ class MistralProvider(BaseProvider):
     def __init__(self, model_config: dict):
         super().__init__(model_config)
         try:
-            from mistralai import Mistral
+            from mistralai.client import Mistral
             self._client = Mistral(api_key=self.api_key)
         except ImportError:
             raise ImportError("mistralai is required: pip install mistralai")
@@ -21,6 +21,7 @@ class MistralProvider(BaseProvider):
         token_callback: Callable[[str], None],
         done_callback: Callable[[int, int], None],
         error_callback: Callable[[str], None],
+        images: list[str] | None = None,
     ) -> None:
         try:
             messages = []
@@ -34,9 +35,9 @@ class MistralProvider(BaseProvider):
             with self._client.chat.stream(model=self.model_id, messages=messages) as stream:
                 for event in stream:
                     try:
-                        delta = event.data.choices[0].delta
-                        if delta.content:
-                            token_callback(delta.content)
+                        content = event.data.choices[0].delta.content
+                        if content:
+                            token_callback(content)
                     except (AttributeError, IndexError):
                         pass
                     try:

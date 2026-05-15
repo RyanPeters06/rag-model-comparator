@@ -45,13 +45,17 @@ class VectorStore:
         faiss.write_index(self.index, str(self.index_dir / _FAISS_INDEX_FILE))
         with open(self.index_dir / _CHUNKS_FILE, "wb") as f:
             pickle.dump(self.chunks, f)
-        # Build manifest: unique files with page counts
+        # Build manifest: unique files with page counts (use display name for UI)
         files: dict[str, set[int]] = {}
         for c in self.chunks:
             files.setdefault(c.source_file, set()).add(c.page_number)
         manifest = [
-            {"file": name, "pages": max(pages), "chunks": sum(1 for c in self.chunks if c.source_file == name)}
-            for name, pages in files.items()
+            {
+                "file": Path(full_path).name,
+                "pages": max(pages),
+                "chunks": sum(1 for c in self.chunks if c.source_file == full_path),
+            }
+            for full_path, pages in files.items()
         ]
         with open(self.index_dir / _MANIFEST_FILE, "w", encoding="utf-8") as f:
             json.dump(manifest, f, indent=2)
